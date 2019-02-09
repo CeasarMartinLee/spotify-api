@@ -1,6 +1,5 @@
 const Sequelize = require('sequelize')
 const sequelize = require('../db')
-// const Playlist = require('../playlists/model')
 
 const User = sequelize.define('users', {
 	email: {
@@ -21,6 +20,5 @@ const User = sequelize.define('users', {
 		tableName: 'users'
 	})
 
-// User.hasMany(Playlist)
 
 module.exports = User

@@ -45,35 +45,82 @@ router.post('/playlists/:id/songs', auth, (req, res, next) => {
 
 })
 
-router.put('/playlists/:id/songs/:id', (req, res, next) => {
-    Song
-        .findById(req.params.id)
+router.put('/playlists/:idp/songs/:ids', auth, (req, res, next) => {
+    const idp = req.params.idp
+    const ids = req.params.ids
+
+    if(Object.keys(req.body).length===0) {
+        return res.status(422).send({
+            message: 'Song, Artist, Album or Playlist should have a value'
+        })        
+    }
+
+    Playlist
+    .findById(idp)
+    .then(playlist => {
+        console.log(idp, 'playlist')
+        if (!playlist) {
+            return res.status(404).send({
+                message: `Playlist does not exist`
+            })
+        } else if (playlist.userId !== req.user.id){
+            return res.status(404).send({
+                message: `Playlist not found`
+            })               
+        }})
+    .then(
+        Song
+        .findById(ids)
         .then(song => {
+            console.log(song)
             if (!song) {
                 return res.status(404).send({
                     message: `Song does not exist`
                 })
             }
-            return song.update(req.body).then(song => res.send(song))
+            return song.update(req.body)
+            .then(song => res.status(200).send(song))
         })
+    )    
+
         .catch(error => next(error))
 })
 
-router.delete('/playlists/:id/songs/:id', (req, res, next) => {
-    Song
-        .findById(req.params.id)
+router.delete('/playlists/:idp/songs/:ids', auth, (req, res, next) => {
+    const idp = req.params.idp
+    const ids = req.params.ids
+
+    Playlist
+    .findById(idp)
+    .then(playlist => {
+        console.log(idp, 'playlist')
+        if (!playlist) {
+            return res.status(404).send({
+                message: `Playlist does not exist`
+            })
+        } else if (playlist.userId !== req.user.id){
+            return res.status(404).send({
+                message: `Playlist not found`
+            })               
+        }})
+    .then(
+        Song
+        .findById(ids)
         .then(song => {
+            console.log(ids, 'song')
+
             if (!song) {
                 return res.status(404).send({
                     message: `Song does not exist`
                 })
             }
             return song.destroy()
-                .then(() => res.send({
+                .then(() => res.status(204).send({
                     message: `Song was deleted`
                 }))
         })
-        .catch(error => next(error))
+    )
+    .catch(error => next(error))
 })
 
 module.exports = router

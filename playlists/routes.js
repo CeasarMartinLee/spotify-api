@@ -3,8 +3,6 @@ const Playlist = require('./model')
 const Song = require('../songs/model')
 const auth = require('../auth/middleware')
 
-
-
 const router = new Router()
 
 router.get('/playlists', auth, (req, res, next) => {
@@ -50,20 +48,6 @@ router.post('/playlists', auth, (req, res, next) => {
         .catch(error => next(error))
 })
 
-// router.put('/playlists/:id', (req, res, next) => {
-//     Playlist
-//     .findById(req.params.id)
-//     .then(playlist => {
-//       if (!playlist) {
-//         return res.status(404).send({
-//           message: `Playlist does not exist`
-//         })
-//       }
-//       return playlist.update(req.body).then(playlist => res.send(playlist))
-//     })
-//     .catch(error => next(error))
-// })
-
 router.delete('/playlists/:id', auth, (req, res, next) => {
     Playlist
         .findById(req.params.id)
@@ -77,7 +61,7 @@ router.delete('/playlists/:id', auth, (req, res, next) => {
                     message: `Playlist not found`
                 })               
             }
-            
+
             return playlist.destroy()
                 .then(
                     Song

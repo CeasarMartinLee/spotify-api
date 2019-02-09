@@ -1,6 +1,5 @@
 const Sequelize = require('sequelize')
 const sequelize = require('../db')
-// const Playlist = require('../playlists/model')
 
 const Song = sequelize.define('songs', {
     songTitle: {
@@ -23,6 +22,5 @@ const Song = sequelize.define('songs', {
         tableName: 'songs'
     })
 
-// Song.belongsTo(Playlist)
 
 module.exports = Song
