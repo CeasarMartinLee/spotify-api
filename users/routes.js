@@ -1,34 +1,24 @@
 const { Router } = require('express')
 const User = require('./model')
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt')
 
 const router = new Router()
 
-router.get('/users', (req, res, next) => {
-    User
-        .findAll()
-        .then(user => res.send({ user }))
-        .catch(error => next(error))
-})
-
-router.get('/users/:id', (req, res, next) => {
-    User
-      .findById(req.params.id)
-      .then(user => {
-        if (!user) {
-          return res.status(404).send({
-            message: `User does not exist`
-          })
-        }
-        return res.send(user)
-      })
-      .catch(error => next(error))
-})
-
 router.post('/users', (req, res, next) => {
+    if (!req.body.password || !req.body.confirmation || !req.body.email) {
+        return res.status(422).send({
+            message: 'Email,Password and Confirmation should have a value'
+        })
+    } else if (req.body.password !== req.body.confirmation) {
+        return res.status(422).send({
+            message: 'Password confirmation does not match password'
+        })
+    }
+
     const user = {
         email: req.body.email,
-        password: bcrypt.hashSync(req.body.password, 10)
+        password: bcrypt.hashSync(req.body.password, 10),
+        confirmation: bcrypt.hashSync(req.body.confirmation, 10)
     }
     
     User
